@@ -1,280 +1,642 @@
-************************************************************************
-*** This document contains the URLs and commands used in this course ***
-************************************************************************
 
-*** 01_02 ***
-https://www.docker.com/products/docker-desktop/
 
-https://code.visualstudio.com/download
+# ************************************
 
-*** 01_03 ***
-https://github.com/LinkedInLearning/docker-your-first-project-4485003
+# **01 — SETUP & INSTALLATION**
 
-https://git-scm.com/downloads
+# ************************************
 
+## **01_02 — Tools to Install**
+
+### 1. **Docker Desktop**
+
+URL: [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)
+👉 This is the main application that lets you run Docker containers.
+
+### 2. **VS Code**
+
+URL: [https://code.visualstudio.com/download](https://code.visualstudio.com/download)
+👉 Code editor for writing Dockerfiles, docker-compose files, and development.
+
+---
+
+## **01_03 — Git Commands**
+
+### **Clone the course project**
+
+```sh
 cd c:\projects\docker-your-first-project-4485003
-
 git clone https://github.com/LinkedInLearning/docker-your-first-project-4485003.git
+```
 
+### **Switch to specific branch (movie chapter)**
+
+```sh
 git checkout CHAPTER#_MOVIE#
+```
 
+### **See your branches**
+
+```sh
 git branch
+```
 
-*** 02_01 ***
-Code for this video is in the dockerfile
+👉 These are standard Git workflow commands.
 
-*** 02_02 ***
+---
+
+# ************************************
+
+# **02 — DOCKER BUILD BASICS**
+
+# ************************************
+
+## **02_01 — Dockerfile code**
+
+The video's code is inside the Dockerfile.
+No commands needed here.
+
+---
+
+## **02_02 — docker build**
+
+### **Command Format**
+
+```sh
 docker build [OPTIONS] PATH | URL | -
+```
 
-https://docs.docker.com/engine/reference/commandline/build/
+### **Build image in current folder**
 
+```sh
 docker build .
+```
 
-docker build -f [dockerfile] .
+👉 Looks for a Dockerfile in current directory and builds an image.
 
+### **Specify Dockerfile**
+
+```sh
+docker build -f MyDockerfile .
+```
+
+### **Force remove intermediate containers**
+
+```sh
 docker build --force-rm=true .
+```
 
+### **Remove temporary containers after build**
+
+```sh
 docker build --rm=true .
+```
 
+### **Build without using cache**
+
+```sh
 docker build --no-cache .
+```
 
+👉 Useful when Docker reuses old layers but you want a fresh build.
+
+### **Help**
+
+```sh
 docker build --help
+```
 
-*** 03_01 ***
+---
+
+# ************************************
+
+# **03 — WORKING WITH IMAGES**
+
+# ************************************
+
+## **03_01 — Searching and pulling images**
+
+### **Search for image**
+
+```sh
 docker search python
+```
 
+### **Filter official images**
+
+```sh
 docker search --filter is-official=true python
+```
 
+### **Filter by stars**
+
+```sh
 docker search --filter stars=100 python
+```
 
+### **Filter automated builds**
+
+```sh
 docker search --filter is-automated=true python
+```
 
+### **Combine filters**
+
+```sh
 docker search --filter is-official=true --filter stars=10 --filter is-automated=false python
+```
 
+### **Limit results**
+
+```sh
 docker search --limit 4 python
+```
 
+### **Show full description**
+
+```sh
 docker search --no-trunc python
+```
 
-docker search --format "{{.Name}}: {{.Description}}" --no-trunc python
+### **Custom format**
 
-docker search --format "table {{.Name}}\t{{.IsAutomated}}\t{{.IsOfficial}}\t{{.Description}}\t{{.StarCount}}" python
+```sh
+docker search --format "{{.Name}}: {{.Description}}" python
+```
 
-docker search --format "table {{.Name}}\t{{.IsOfficial}}\t{{.Description}}\t{{.StarCount}}" --filter is-official=true --filter stars=10 --no-trunc python
+### **Pull image**
 
-docker search --help
-
+```sh
 docker image pull python
+```
 
-https://hub.docker.com/_/python
+### **Pull specific tag**
 
+```sh
 docker image pull python:3.12-rc-bookworm
+```
 
-docker image pull --help
+---
 
-*** 03_02 ***
-docker image ls [OPTIONS] [REPOSITORY[:TAG]]
+## **03_02 — Listing images**
 
+### **Show all images**
+
+```sh
 docker image ls --all
+```
 
+### **Show long IDs**
+
+```sh
 docker image ls --no-trunc
+```
 
+### **Show only IDs**
+
+```sh
 docker image ls --quiet
+```
 
+### **Show digests**
+
+```sh
 docker image ls --digests
+```
 
+### **Filter by image name**
+
+```sh
 docker image ls --filter reference=python*
+```
 
+### **Filter before**
+
+```sh
 docker image ls --filter before=python
+```
 
+### **Filter since**
+
+```sh
 docker image ls --filter since=python
+```
 
+### **Filter dangling (unused) images**
+
+```sh
 docker image ls --filter dangling=true
+```
 
+### **Filter by label**
+
+```sh
 docker image ls --filter label=python*
+```
 
-docker image ls --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}\t{{.Size}}\t{{.CreatedSince}}\t{{.CreatedAt}}\t{{.Digest}}"
+### **Custom format table**
 
-docker image ls --help
+```sh
+docker image ls --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}"
+```
 
-https://docs.docker.com/engine/reference/commandline/image_ls/
+---
 
-*** 03_03 ***
-docker build -t SOURCE_IMAGE[:TAG] .
+## **03_03 — Tagging + labels**
 
+### **Build with a tag**
+
+```sh
 docker build -t big-star-collectibles .
+```
 
+### **Build with multiple tags**
+
+```sh
 docker build --no-cache -t big-star-collectibles:v1 -t big-star-collectibles .
+```
 
-docker image ls
+### **Add tag to existing image**
 
-docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
-
+```sh
 docker tag big-star-collectibles:v1 big-star-collectibles:v1-python
+```
 
-docker build --no-cache -t big-star-collectibles:v2 .
+### **Tag using image ID**
 
-docker tag SOURCE_IMAGE_ID TARGET_IMAGE[:TAG]
+```sh
+docker tag IMAGE_ID big-star-collectibles:v1
+```
 
-LABEL <key>=<value> <key>=<value> <key>=<value> ...
+### **Add labels inside Dockerfile**
 
+```
+LABEL key=value key=value
+```
+
+### **Filter images by label**
+
+```sh
 docker image ls --filter label="com.example.vendor"="Big Star Collectibles"
+```
 
-*** 03_04 ***
-https://hub.docker.com/
+---
 
+## **03_04 — Push to Docker Hub**
+
+### **Login**
+
+```sh
 docker login
+```
 
-docker tag big-star-collectibles:v2 sbenhoff/big-star-collectibles-repo:big-star-collectibles
+### **Tag image for Docker Hub**
 
-docker push sbenhoff/big-star-collectibles-repo:big-star-collectibles
+```sh
+docker tag big-star-collectibles:v2 username/repo:tag
+```
 
-docker pull sbenhoff/big-star-collectibles-repo:big-star-collectibles
+### **Push**
 
-*** 03_05 ***
-docker image ls
+```sh
+docker push username/repo:tag
+```
 
+### **Pull**
+
+```sh
+docker pull username/repo:tag
+```
+
+---
+
+## **03_05 — Inspect image**
+
+### **Show raw config**
+
+```sh
 docker image inspect IMAGE_ID
+```
 
-docker image inspect --format='{{json .Config.Labels}}' big-star-collectibles:v2
+### **Format (labels only)**
 
-*** 03_06 ***
-docker image ls
+```sh
+docker image inspect --format='{{json .Config.Labels}}' image_name
+```
 
-docker rmi [OPTIONS] IMAGE [IMAGE...]
+---
 
-docker rmi -f big-star-collectibles:v2
+## **03_06 — Remove images**
 
-docker rmi -f IMAGE_ID
+### **Delete single image**
 
-docker images --digests
+```sh
+docker rmi big-star-collectibles:v2
+```
 
-docker rmi -f sbenhoff/big-star-collectibles@[DIGEST]
+### **Delete by ID**
 
-*** 04_01 ***
-https://docs.docker.com/engine/reference/commandline/run/
+```sh
+docker rmi IMAGE_ID
+```
 
-docker start [OPTIONS] CONTAINER [CONTAINER...]
+### **Delete by digest**
 
-docker start big-star-collectibles:v2
+```sh
+docker rmi username/repo@DIGEST
+```
 
-docker run [OPTIONS] IMAGE[:TAG] [COMMAND] [ARG...]
+---
 
+# ************************************
+
+# **04 — WORKING WITH CONTAINERS**
+
+# ************************************
+
+## **04_01 — Run / Start / Stop / Kill**
+
+### **Start existing container**
+
+```sh
+docker start CONTAINER
+```
+
+### **Run new container**
+
+```sh
 docker run -it -d -p 5000:5000 -v ${PWD}:/app/code big-star-collectibles
+```
 
-http://localhost:5000
+**Meaning:**
 
-docker stop [OPTIONS] CONTAINER [CONTAINER...]
+* `-it` → interactive terminal
+* `-d` → run in background
+* `-p` → port mapping
+* `-v` → mount folder
 
-docker stop big-star-collectibles:v2
+### **Open in browser**
 
-docker kill [OPTIONS] CONTAINER [CONTAINER...]
+[http://localhost:5000](http://localhost:5000)
 
-docker kill big-star-collectibles:v2
+### **Stop running container**
 
-*** 04_02 ***
-https://docs.docker.com/engine/reference/commandline/ps/
+```sh
+docker stop CONTAINER
+```
 
-docker ps [OPTIONS]
+### **Force kill container**
 
+```sh
+docker kill CONTAINER
+```
+
+---
+
+## **04_02 — docker ps**
+
+### **Show running containers**
+
+```sh
 docker ps
+```
 
+### **Show all containers**
+
+```sh
 docker ps -a
+```
 
+### **Show last container**
+
+```sh
 docker ps -n 1
+```
 
+### **Only IDs**
+
+```sh
 docker ps -q
+```
 
+### **Show sizes**
+
+```sh
 docker ps -s
+```
 
+### **Show latest created**
+
+```sh
 docker ps -l
+```
 
+### **No truncation**
+
+```sh
 docker ps --no-trunc
+```
 
-docker ps --filter label="com.example.vendor"="Big Star Collectibles"
+### **Filter by label**
 
+```sh
+docker ps --filter label="vendor=Big Star Cookies"
+```
+
+### **Filter by exited status**
+
+```sh
 docker ps -a --filter 'exited=0'
+```
 
+### **Filter by image**
+
+```sh
 docker ps --filter ancestor=big-star-collectibles
+```
 
-docker ps --filter label="com.example.vendor"="Big Star Collectibles" --format json
+---
 
-docker ps --filter label="com.example.vendor"="Big Star Collectibles" --format "table {{.ID}}\t{{.Names}}"
+### ⭐ **Common Docker Exit Codes**
 
-* COMMON DOCKER CONTAINER EXIT CODES *
-Exit Code 0	    Purposely stopped
-Exit Code 1	    Application error
-Exit Code 125	Container failed to run error
-Exit Code 126	Command invoke error
-Exit Code 127	File or directory not found
-Exit Code 128	Invalid argument used on exit
-Exit Code 134	Abnormal termination (SIGABRT)
-Exit Code 137	Immediate termination (SIGKILL)
-Exit Code 139	Segmentation fault (SIGSEGV)
-Exit Code 143	Graceful termination (SIGTERM)
-Exit Code 255	Exit Status Out Of Range
+| Code | Meaning                 |
+| ---- | ----------------------- |
+| 0    | Clean exit              |
+| 1    | Application error       |
+| 125  | Container failed to run |
+| 126  | Command cannot run      |
+| 127  | File not found          |
+| 128  | Invalid argument        |
+| 134  | Abnormal termination    |
+| 137  | SIGKILL                 |
+| 139  | Segmentation fault      |
+| 143  | SIGTERM                 |
+| 255  | Out of range            |
 
-*** 04_03 ***
-https://docs.docker.com/engine/reference/commandline/inspect/
+---
 
-docker inspect [OPTIONS] NAME|ID [NAME|ID...]
+## **04_03 — docker inspect**
 
-docker ps
+### **Inspect container**
 
-docker inspect [ID]
+```sh
+docker inspect NAME
+```
 
-docker inspect --format='{{.Config.Image}}' [NAME|ID]
+### **Get container image**
 
-docker inspect --format='{{.Id}}' [NAME|ID]
+```sh
+docker inspect --format='{{.Config.Image}}' NAME
+```
 
-docker inspect --format='{{.LogPath}}' [NAME|ID]
+### **Get container ID**
 
-docker inspect --format='{{json .Config}}' [NAME|ID]
+```sh
+docker inspect --format='{{.Id}}' NAME
+```
 
-*** 04_04 ***
-https://docs.docker.com/engine/reference/commandline/logs/
+### **Get log file path**
 
-docker logs [OPTIONS] CONTAINER
+```sh
+docker inspect --format='{{.LogPath}}' NAME
+```
 
-docker logs --tail 1000 -f [NAME|ID]
+### **Show full config JSON**
 
-docker logs --tail 1000 -f --details [NAME|ID]
+```sh
+docker inspect --format='{{json .Config}}' NAME
+```
 
-* UTC Format
-docker logs --tail 1000 -f --since 2023-12-01T01:00:00Z [NAME|ID]
+---
 
-docker logs --tail 1000 -f --until 2023-12-01T01:00:00Z [NAME|ID]
+## **04_04 — docker logs**
 
-* Relative Format
-docker logs --tail 1000 -f --since 60 [NAME|ID]
+### **Show logs**
 
-docker logs --tail 1000 -f --until 60 [NAME|ID]
+```sh
+docker logs CONTAINER
+```
 
-docker logs --tail 1000 -f --timestamps [NAME|ID]
+### **Follow logs**
 
-*** 04_05 ***
-docker volume create big-star-collectibles-vol
+```sh
+docker logs -f CONTAINER
+```
 
+### **Show last 1000 lines**
+
+```sh
+docker logs --tail 1000 -f CONTAINER
+```
+
+### **With details**
+
+```sh
+docker logs --details CONTAINER
+```
+
+### **Using timestamps**
+
+```sh
+docker logs --timestamps CONTAINER
+```
+
+### **Logs since datetime**
+
+```sh
+docker logs --since 2023-12-01T01:00:00Z
+```
+
+### **Relative time**
+
+```sh
+docker logs --since 60
+```
+
+---
+
+## **04_05 — Volumes**
+
+### **Create volume**
+
+```sh
+docker volume create data-vol
+```
+
+### **List volumes**
+
+```sh
 docker volume ls
+```
 
-docker volume inspect big-star-collectibles-vol
+### **Inspect volume**
 
-docker run -it -d -p 5000:5000 -v big-star-collectibles-vol:/app/data sbenhoff/big-star-collectibles-repo:big-star-collectibles
+```sh
+docker volume inspect data-vol
+```
 
-docker volume rm big-star-collectibles-vol
+### **Use volume**
 
-docker run -it -d -p 5000:5000 -v "$(PWD)/test"/target:/app/test sbenhoff/big-star-collectibles-repo:big-star-collectibles
+```sh
+docker run -v data-vol:/app/data IMAGE
+```
 
-docker run -it -d -p 5000:5000 --mount type=bind,source="$(PWD)/test",target=/app/test sbenhoff/big-star-collectibles-repo:big-star-collectibles
+### **Remove volume**
 
-*** 04_06 ***
+```sh
+docker volume rm data-vol
+```
+
+### **Bind mount (folder from host)**
+
+```sh
+docker run -v "$(PWD)/test":/app/test IMAGE
+```
+
+### **Mount with --mount**
+
+```sh
+docker run --mount type=bind,source="$(PWD)/test",target=/app/test IMAGE
+```
+
+---
+
+## **04_06 — Pruning (Clean up)**
+
+### **Remove unused images**
+
+```sh
 docker image prune
+```
 
+### **Remove ALL unused images**
+
+```sh
 docker image prune -a -f
+```
 
-docker image prune -a -f --filter label="com.example.vendor"="Big Star Collectibles"
+### **Prune by label**
 
+```sh
+docker image prune -a -f --filter label="vendor=Big Star"
+```
+
+### **Remove unused containers**
+
+```sh
 docker container prune
+```
 
-docker volume prune -f --filter label="com.example.vendor"="Big Star Collectibles"
+### **Remove unused volumes**
 
+```sh
+docker volume prune -f
+```
+
+### **Remove EVERYTHING**
+
+```sh
 docker system prune --volumes -f
+```
+
+---
